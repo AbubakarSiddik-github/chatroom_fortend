@@ -1,0 +1,120 @@
+/* ═══════════════════════════════════════════════════════════
+   Sidebar — shared styles for RoomList + UserList
+   ═══════════════════════════════════════════════════════════ */
+.sidebar-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.sidebar-items {
+  list-style: none;
+  overflow-y: auto;
+  flex: 1;
+  padding: 0 .5rem .5rem;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  padding: .6rem .65rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .15s var(--ease);
+  margin-bottom: 2px;
+  min-height: var(--touch-min);
+}
+.sidebar-item:hover { background: var(--surface2); }
+.sidebar-item.active {
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.sidebar-item-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.sidebar-item-top,
+.sidebar-item-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .4rem;
+}
+
+.sidebar-item-name {
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-item-time {
+  font-size: .68rem;
+  color: var(--muted);
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+
+.sidebar-item-preview {
+  font-size: .78rem;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Badges */
+.sidebar-badge {
+  font-size: .6rem;
+  padding: .1rem .35rem;
+  border-radius: 4px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  flex-shrink: 0;
+}
+.sidebar-badge.private {
+  background: rgba(99,102,241,.12);
+  color: var(--accent-h);
+}
+.sidebar-badge.group {
+  background: rgba(52,211,153,.1);
+  color: var(--success);
+}
+
+/* Online status text */
+.sidebar-status {
+  font-size: .68rem;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.sidebar-status.on { color: var(--success); }
+
+/* DM hint */
+.sidebar-dm-hint {
+  font-size: .68rem;
+  color: var(--accent);
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity .15s var(--ease);
+  flex-shrink: 0;
+}
+.sidebar-item:hover .sidebar-dm-hint { opacity: 1; }
+
+/* Empty state */
+.sidebar-empty {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  font-size: .85rem;
+  color: var(--muted);
+  line-height: 1.6;
+}

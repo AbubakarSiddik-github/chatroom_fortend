@@ -1,0 +1,280 @@
+/* ═══════════════════════════════════════════════════════════
+   ChatWindow
+   ═══════════════════════════════════════════════════════════ */
+#chat-window {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Empty state ──────────────────────────────────────── */
+.chat-empty {
+  align-items: center;
+  justify-content: center;
+}
+.chat-empty-content {
+  text-align: center;
+  color: var(--muted);
+  max-width: 320px;
+  padding: 2rem;
+}
+.chat-empty-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  animation: floatEmoji 3s ease-in-out infinite;
+}
+@keyframes floatEmoji {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+.chat-empty-content h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: .5rem;
+}
+.chat-empty-content p {
+  font-size: .88rem;
+  line-height: 1.6;
+}
+
+/* ── Header ───────────────────────────────────────────── */
+#chat-window-header {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .65rem 1rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  min-height: var(--nav-h);
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  color: var(--text-2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  transition: background .15s var(--ease), color .15s var(--ease);
+  flex-shrink: 0;
+}
+.icon-btn:hover { background: var(--surface2); color: var(--text); }
+.icon-btn.sm { width: 28px; height: 28px; border-radius: 6px; }
+
+.cw-header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.cw-header-name-row {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+}
+
+.cw-header-text h2 {
+  font-size: .95rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cw-meta {
+  font-size: .75rem;
+  color: var(--muted);
+}
+
+/* ── Messages area ────────────────────────────────────── */
+#messages-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+
+.msg-status-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: .75rem;
+}
+.msg-status {
+  text-align: center;
+  color: var(--muted);
+  font-size: .88rem;
+}
+.msg-status.error { color: var(--danger); }
+
+/* Spinner */
+.spinner {
+  width: 28px; height: 28px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Message bubbles ──────────────────────────────────── */
+.message-row {
+  display: flex;
+  align-items: flex-end;
+  gap: .45rem;
+  max-width: 75%;
+  animation: msgIn .25s var(--ease) both;
+}
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.message-row.mine   { align-self: flex-end; flex-direction: row-reverse; }
+.message-row.theirs { align-self: flex-start; }
+
+.message-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: .1rem;
+  max-width: 100%;
+}
+
+.msg-sender {
+  font-size: .7rem;
+  color: var(--accent-h);
+  font-weight: 600;
+  padding-left: .15rem;
+}
+
+.msg-content {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: .55rem .9rem;
+  font-size: .9rem;
+  line-height: 1.45;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.message-row.mine .msg-content {
+  background: linear-gradient(135deg, var(--accent), #7c3aed);
+  border-color: transparent;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.message-row.theirs .msg-content {
+  border-bottom-left-radius: 4px;
+}
+
+.msg-content.deleted {
+  opacity: .45;
+  font-style: italic;
+}
+
+/* Meta line (time + read status) */
+.msg-meta {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  padding: 0 .15rem;
+  justify-content: flex-end;
+}
+
+.msg-time {
+  font-size: .66rem;
+  color: var(--muted);
+}
+
+.msg-read {
+  font-size: .64rem;
+  font-weight: 600;
+}
+.msg-read.sent { color: var(--muted); }
+.msg-read.read { color: var(--success); }
+
+/* ── Typing indicator ─────────────────────────────────── */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .3rem .5rem;
+  color: var(--muted);
+  font-size: .82rem;
+  animation: msgIn .25s var(--ease);
+}
+
+.typing-dots {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.typing-dots span {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: typingBounce 1.4s infinite ease-in-out both;
+}
+.typing-dots span:nth-child(1) { animation-delay: -.32s; }
+.typing-dots span:nth-child(2) { animation-delay: -.16s; }
+.typing-dots span:nth-child(3) { animation-delay: 0s; }
+
+@keyframes typingBounce {
+  0%, 80%, 100% { transform: scale(0.5); opacity: 0.3; }
+  40%           { transform: scale(1);   opacity: 1; }
+}
+
+/* ── Attachments ──────────────────────────────────────── */
+.image-attachment img {
+  max-width: 100%;
+  max-height: 250px;
+  border-radius: var(--radius-xs);
+  display: block;
+  object-fit: cover;
+  background: var(--bg-subtle);
+}
+
+.file-attachment .file-card {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  text-decoration: none;
+  color: inherit;
+}
+.file-card svg {
+  color: var(--accent-h);
+  flex-shrink: 0;
+}
+.file-card .file-info {
+  display: flex;
+  flex-direction: column;
+}
+.file-card .file-name {
+  font-weight: 600;
+  font-size: .85rem;
+}
+.file-card .file-size {
+  font-size: .7rem;
+  color: var(--muted);
+}
+.message-row.mine .file-card svg,
+.message-row.mine .file-card .file-size {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 640px) {
+  #messages-area { padding: .75rem; }
+  .message-row { max-width: 88%; }
+  .msg-content { font-size: .88rem; padding: .5rem .75rem; }
+}

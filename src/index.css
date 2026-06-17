@@ -1,0 +1,173 @@
+/* =========================================================
+   Connectify — Design System & Global Styles
+   ========================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* ── Core palette ─────────────────────────────────────── */
+  --bg:         #0b0d14;
+  --bg-subtle:  #0f111a;
+  --surface:    #151823;
+  --surface2:   #1c2033;
+  --surface3:   #232840;
+  --border:     #262b44;
+  --border-l:   #2e3454;
+
+  /* ── Accent ──────────────────────────────────────────── */
+  --accent:     #6366f1;
+  --accent-h:   #818cf8;
+  --accent-glow: rgba(99,102,241,.15);
+  --accent-soft: rgba(99,102,241,.08);
+
+  /* ── Text ────────────────────────────────────────────── */
+  --text:       #e4e7f1;
+  --text-2:     #b0b5cc;
+  --muted:      #6b7194;
+
+  /* ── Semantic ────────────────────────────────────────── */
+  --success:    #34d399;
+  --success-bg: rgba(52,211,153,.12);
+  --danger:     #f87171;
+  --danger-bg:  rgba(248,113,113,.1);
+  --warning:    #fbbf24;
+
+  /* ── Spacing / Shape ─────────────────────────────────── */
+  --radius:     14px;
+  --radius-sm:  8px;
+  --radius-xs:  6px;
+  --sidebar-w:  320px;
+  --nav-h:      56px;
+  --touch-min:  44px;
+
+  /* ── Transitions ─────────────────────────────────────── */
+  --ease:       cubic-bezier(.4,0,.2,1);
+}
+
+/* ── Responsive sidebar widths ─────────────────────────── */
+@media (max-width: 900px)  { :root { --sidebar-w: 280px; } }
+@media (max-width: 640px)  { :root { --sidebar-w: 100%; } }
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* ── Utility ───────────────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+
+/* ── Toast / snackbar ──────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  padding: .65rem 1.25rem;
+  border-radius: var(--radius-sm);
+  font-size: .85rem;
+  font-weight: 500;
+  z-index: 1000;
+  opacity: 0;
+  transition: transform .35s var(--ease), opacity .35s var(--ease);
+  pointer-events: none;
+}
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.toast.error   { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(248,113,113,.25); }
+.toast.success { background: var(--success-bg); color: var(--success); border: 1px solid rgba(52,211,153,.25); }
+
+/* ── Shared form elements ──────────────────────────────── */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: .5rem .75rem;
+  margin: .6rem .75rem;
+  transition: border-color .2s var(--ease);
+}
+.search-bar:focus-within { border-color: var(--accent); }
+
+.search-bar svg {
+  width: 16px; height: 16px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.search-bar input {
+  flex: 1;
+  border: none;
+  background: none;
+  color: var(--text);
+  font-size: .85rem;
+  outline: none;
+  font-family: inherit;
+}
+.search-bar input::placeholder { color: var(--muted); }
+
+/* ── Avatar ────────────────────────────────────────────── */
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  user-select: none;
+}
+.avatar.sm  { width: 32px; height: 32px; font-size: .75rem; }
+.avatar.md  { width: 38px; height: 38px; font-size: .85rem; }
+.avatar.lg  { width: 48px; height: 48px; font-size: 1.1rem;  }
+.avatar.xl  { width: 64px; height: 64px; font-size: 1.4rem;  }
+
+/* Avatar color gradient by first letter */
+.avatar.a,.avatar.f,.avatar.k,.avatar.p,.avatar.u  { background: linear-gradient(135deg,#6366f1,#8b5cf6); }
+.avatar.b,.avatar.g,.avatar.l,.avatar.q,.avatar.v  { background: linear-gradient(135deg,#06b6d4,#3b82f6); }
+.avatar.c,.avatar.h,.avatar.m,.avatar.r,.avatar.w  { background: linear-gradient(135deg,#f43f5e,#ec4899); }
+.avatar.d,.avatar.i,.avatar.n,.avatar.s,.avatar.x  { background: linear-gradient(135deg,#f59e0b,#ef4444); }
+.avatar.e,.avatar.j,.avatar.o,.avatar.t,.avatar.y,.avatar.z { background: linear-gradient(135deg,#10b981,#14b8a6); }
+
+/* Presence dot */
+.avatar-wrap { position: relative; flex-shrink: 0; }
+.presence {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  border: 2.5px solid var(--surface);
+}
+.presence.online  { background: var(--success); }
+.presence.offline { background: #4a4f6a; }
+.avatar.sm + .presence, .avatar-wrap .avatar.sm ~ .presence { width: 9px; height: 9px; border-width: 2px; }

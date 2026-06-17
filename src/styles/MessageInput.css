@@ -1,0 +1,93 @@
+/* ═══════════════════════════════════════════════════════════
+   MessageInput
+   ═══════════════════════════════════════════════════════════ */
+#message-input-form {
+  display: flex;
+  align-items: flex-end;
+  gap: .6rem;
+  padding: .6rem 1rem;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+#message-input {
+  flex: 1;
+  resize: none;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: .6rem .85rem;
+  color: var(--text);
+  font-size: .9rem;
+  font-family: inherit;
+  line-height: 1.4;
+  outline: none;
+  min-height: var(--touch-min);
+  max-height: 120px;
+  overflow-y: auto;
+  transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+}
+#message-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+#message-input::placeholder { color: var(--muted); }
+#message-input:disabled { opacity: .4; cursor: not-allowed; }
+
+#send-btn {
+  width: var(--touch-min);
+  height: var(--touch-min);
+  border-radius: 12px;
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .2s var(--ease), transform .15s var(--ease), box-shadow .2s var(--ease);
+}
+#send-btn:hover:not(:disabled) {
+  background: var(--accent-h);
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(99,102,241,.3);
+}
+#send-btn:active:not(:disabled) { transform: scale(.97); }
+#send-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+.attach-menu {
+  position: absolute;
+  bottom: 100%;
+  left: 1rem;
+  margin-bottom: .5rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: .4rem;
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,.3);
+  animation: msgIn .2s var(--ease);
+}
+.attach-menu button {
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: .85rem;
+  font-family: inherit;
+  padding: .5rem .8rem;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  text-align: left;
+  transition: background .15s var(--ease);
+}
+.attach-menu button:hover {
+  background: var(--surface3);
+}
+
+@media (max-width: 640px) {
+  #message-input-form { padding: .5rem .75rem; }
+}
