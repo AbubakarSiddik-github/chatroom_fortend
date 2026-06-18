@@ -3,6 +3,7 @@ import { getCurrentUserId, formatTime } from '../utils/helpers';
 import { getRoomDisplayName, getOtherUser, getOtherActualName, hasNickname } from '../utils/roomHelpers';
 import NicknameService from '../services/nicknameService';
 import NicknameModal from './NicknameModal';
+import ConfirmModal from './ConfirmModal';
 import '../styles/ChatWindow.css';
 
 const BackIcon = () => (
@@ -20,11 +21,22 @@ const FileIcon = () => (
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
   </svg>
 );
+const ReplyIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/>
+  </svg>
+);
+const TrashIcon = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+  </svg>
+);
 
-export default function ChatWindow({ room, messages, loading, error, typingUser, onlineUsers = {}, onBack, userMap = {}, onNicknameChanged }) {
+export default function ChatWindow({ room, messages, loading, error, typingUser, onlineUsers = {}, onBack, userMap = {}, onNicknameChanged, onReply, onDeleteMessage }) {
   const bottomRef = useRef(null);
   const myId = getCurrentUserId();
   const [showNicknameModal, setShowNicknameModal] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null); // message to confirm delete
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -64,24 +76,48 @@ export default function ChatWindow({ room, messages, loading, error, typingUser,
     subtitle = `${room.memberIds?.length ?? 0} members`;
   }
 
-  const handleSaveNickname = (nickname) => {
-    if (otherUser) {
-      NicknameService.set(myId, otherUser.id, nickname);
-      onNicknameChanged?.();
+  // Avatar display helper
+  const getAvatarEl = (user, size = 'md') => {
+    if (user?.avatarUrl) {
+      return <img src={user.avatarUrl} alt={user.username} className={`avatar ${size} avatar-img`} />;
     }
+    const letter = (user?.username || displayName || '?')[0];
+    return <div className={`avatar ${size} ${letter.toLowerCase()}`}>{letter.toUpperCase()}</div>;
+  };
+
+  const handleSaveNickname = (nickname) => {
+    if (otherUser) { NicknameService.set(myId, otherUser.id, nickname); onNicknameChanged?.(); }
   };
   const handleClearNickname = () => {
-    if (otherUser) {
-      NicknameService.clear(myId, otherUser.id);
-      onNicknameChanged?.();
+    if (otherUser) { NicknameService.clear(myId, otherUser.id); onNicknameChanged?.(); }
+  };
+
+  const confirmDelete = (msg) => {
+    setDeleteTarget(msg);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deleteTarget) {
+      onDeleteMessage?.(deleteTarget);
+      setDeleteTarget(null);
     }
+  };
+
+  const renderReplyQuote = (msg) => {
+    if (!msg.replyToId || !msg.replyToContent) return null;
+    return (
+      <div className="reply-quote">
+        <span className="reply-quote-sender">{msg.replyToSenderName}</span>
+        <span className="reply-quote-text">{msg.replyToContent}</span>
+      </div>
+    );
   };
 
   const renderMessageContent = (msg) => {
     if (msg.deleted) {
       return <p className="msg-content deleted">This message was deleted</p>;
     }
-    
+
     if (msg.type === 'IMAGE') {
       return (
         <div className="msg-content image-attachment">
@@ -91,7 +127,7 @@ export default function ChatWindow({ room, messages, loading, error, typingUser,
         </div>
       );
     }
-    
+
     if (msg.type === 'FILE') {
       return (
         <div className="msg-content file-attachment">
@@ -99,7 +135,7 @@ export default function ChatWindow({ room, messages, loading, error, typingUser,
             <FileIcon />
             <div className="file-info">
               <span className="file-name">{msg.fileName}</span>
-              <span className="file-size">{(msg.fileSize / 1024 / 1024).toFixed(2)} MB</span>
+              <span className="file-size">{msg.fileSize ? (msg.fileSize / 1024 / 1024).toFixed(2) + ' MB' : ''}</span>
             </div>
           </a>
         </div>
@@ -118,7 +154,7 @@ export default function ChatWindow({ room, messages, loading, error, typingUser,
           </button>
         )}
         <div className="avatar-wrap">
-          <div className={`avatar md ${letterClass}`}>{initial}</div>
+          {getAvatarEl(otherUser)}
           {isPrivate && otherOnline !== null && (
             <span className={`presence ${otherOnline ? 'online' : 'offline'}`} />
           )}
@@ -161,6 +197,7 @@ export default function ChatWindow({ room, messages, loading, error, typingUser,
           const isRead = isMe && msg.readBy?.some((uid) => uid !== myId);
           const senderInitial = (msg.senderName || '?')[0];
           const senderLC = senderInitial.toLowerCase();
+          const senderUser = userMap[msg.senderId];
 
           return (
             <div
@@ -168,10 +205,20 @@ export default function ChatWindow({ room, messages, loading, error, typingUser,
               id={`msg-${msg.id}`}
               className={`message-row ${isMe ? 'mine' : 'theirs'}`}
             >
-              {!isMe && <div className={`avatar sm ${senderLC}`}>{senderInitial}</div>}
+              {!isMe && (
+                <div className="avatar-wrap sm">
+                  {senderUser?.avatarUrl
+                    ? <img src={senderUser.avatarUrl} alt={msg.senderName} className={`avatar sm avatar-img`} />
+                    : <div className={`avatar sm ${senderLC}`}>{senderInitial}</div>
+                  }
+                </div>
+              )}
               <div className="message-bubble">
                 {!isMe && <span className="msg-sender">{msg.senderName}</span>}
-                
+
+                {/* Reply quote block */}
+                {renderReplyQuote(msg)}
+
                 {renderMessageContent(msg)}
 
                 <span className="msg-meta">
@@ -183,6 +230,28 @@ export default function ChatWindow({ room, messages, loading, error, typingUser,
                   )}
                 </span>
               </div>
+
+              {/* Action buttons (reply + delete) */}
+              {!msg.deleted && (
+                <div className={`msg-actions ${isMe ? 'actions-left' : 'actions-right'}`}>
+                  <button
+                    className="msg-action-btn"
+                    title="Reply"
+                    onClick={() => onReply?.(msg)}
+                  >
+                    <ReplyIcon />
+                  </button>
+                  {isMe && (
+                    <button
+                      className="msg-action-btn danger"
+                      title={msg.type === 'IMAGE' || msg.type === 'FILE' ? 'Delete media permanently' : 'Delete message'}
+                      onClick={() => confirmDelete(msg)}
+                    >
+                      <TrashIcon />
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           );
         })}
@@ -203,6 +272,18 @@ export default function ChatWindow({ room, messages, loading, error, typingUser,
           onSave={handleSaveNickname}
           onClear={handleClearNickname}
           onClose={() => setShowNicknameModal(false)}
+        />
+      )}
+
+      {deleteTarget && (
+        <ConfirmModal
+          message={
+            deleteTarget.type === 'IMAGE' || deleteTarget.type === 'FILE'
+              ? 'Delete this media permanently? It will be removed from Cloudinary.'
+              : 'Delete this message?'
+          }
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setDeleteTarget(null)}
         />
       )}
     </div>

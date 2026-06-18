@@ -132,6 +132,7 @@
   gap: .45rem;
   max-width: 75%;
   animation: msgIn .25s var(--ease) both;
+  position: relative;
 }
 @keyframes msgIn {
   from { opacity: 0; transform: translateY(6px); }
@@ -140,6 +141,57 @@
 
 .message-row.mine   { align-self: flex-end; flex-direction: row-reverse; }
 .message-row.theirs { align-self: flex-start; }
+
+/* ── Message action buttons (reply / delete) ──────────────── */
+.msg-actions {
+  display: none;
+  flex-direction: column;
+  gap: .2rem;
+  align-self: center;
+  flex-shrink: 0;
+}
+.message-row:hover .msg-actions { display: flex; }
+.actions-left  { order: -1; }
+.actions-right { order: 99; }
+
+.msg-action-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: .25rem;
+  width: 26px; height: 26px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--text-2);
+  transition: background .15s, color .15s;
+}
+.msg-action-btn:hover { background: var(--surface3, var(--surface2)); color: var(--text); }
+.msg-action-btn.danger:hover { color: var(--danger); border-color: var(--danger); }
+
+/* ── Reply quote block ────────────────────────────────────── */
+.reply-quote {
+  display: flex;
+  flex-direction: column;
+  gap: .1rem;
+  background: var(--surface3, rgba(99,102,241,.12));
+  border-left: 3px solid var(--accent);
+  border-radius: 6px 6px 0 0;
+  padding: .35rem .65rem;
+  font-size: .78rem;
+  max-width: 100%;
+  overflow: hidden;
+}
+.reply-quote-sender {
+  font-weight: 700;
+  color: var(--accent-h);
+  font-size: .72rem;
+}
+.reply-quote-text {
+  color: var(--text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .message-bubble {
   display: flex;
@@ -234,7 +286,7 @@
   40%           { transform: scale(1);   opacity: 1; }
 }
 
-/* ── Attachments ──────────────────────────────────────── */
+/* ── Attachments ──────────────────────────────────────────── */
 .image-attachment img {
   max-width: 100%;
   max-height: 250px;
@@ -243,6 +295,14 @@
   object-fit: cover;
   background: var(--bg-subtle);
 }
+
+/* ── Avatar image ─────────────────────────────────────────── */
+.avatar-img {
+  object-fit: cover;
+  border-radius: 50%;
+}
+.avatar.sm.avatar-img { width: 32px; height: 32px; }
+.avatar.md.avatar-img { width: 40px; height: 40px; }
 
 .file-attachment .file-card {
   display: flex;
